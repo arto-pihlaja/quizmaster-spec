@@ -1,0 +1,715 @@
+openapi: 3.0.3
+info:
+  title: QuizMaster Admin API
+  description: API endpoints for admin role management and content editing
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /admin/users:
+    get:
+      summary: List all users
+      description: |
+        Returns a list of all registered users with their admin status.
+        Admin only endpoint.
+      operationId: listUsers
+      tags:
+        - Admin - User Management
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+            default: 50
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users/{user_id}/promote:
+    post:
+      summary: Promote user to admin
+      description: |
+        Grants admin privileges to a regular user.
+        Admin only endpoint.
+      operationId: promoteUser
+      tags:
+        - Admin - User Management
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User promoted to admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdminResponse'
+        '400':
+          description: User is already an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users/{user_id}/revoke:
+    post:
+      summary: Revoke admin privileges
+      description: |
+        Removes admin privileges from an admin user.
+        Cannot revoke the last remaining admin.
+        Admin only endpoint.
+      operationId: revokeAdmin
+      tags:
+        - Admin - User Management
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Admin privileges revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdminResponse'
+        '400':
+          description: Cannot revoke (not admin or last admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/questions/{question_id}:
+    put:
+      summary: Edit question (admin)
+      description: |
+        Edit any question's text regardless of quiz owner.
+        Admin only endpoint.
+      operationId: adminEditQuestion
+      tags:
+        - Admin - Content Editing
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditQuestionRequest'
+      responses:
+        '200':
+          description: Question updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/questions/{question_id}/points:
+    put:
+      summary: Set question points
+      description: |
+        Set the point value for a question (1-100).
+        Admin only endpoint.
+      operationId: setQuestionPoints
+      tags:
+        - Admin - Content Editing
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: question_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPointsRequest'
+      responses:
+        '200':
+          description: Points updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+        '400':
+          description: Invalid points value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/answers/{answer_id}:
+    put:
+      summary: Edit answer (admin)
+      description: |
+        Edit any answer's text and correct flag regardless of quiz owner.
+        Admin only endpoint.
+      operationId: adminEditAnswer
+      tags:
+        - Admin - Content Editing
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: answer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditAnswerRequest'
+      responses:
+        '200':
+          description: Answer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswerResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Answer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/logs:
+    get:
+      summary: Get admin action log
+      description: |
+        Returns recent admin actions for audit purposes.
+        Admin only endpoint.
+      operationId: getAdminLogs
+      tags:
+        - Admin - Audit
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+            default: 50
+        - name: action
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [grant_admin, revoke_admin, edit_question, edit_answer, set_points]
+          description: Filter by action type
+        - name: admin_id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Filter by admin who performed action
+      responses:
+        '200':
+          description: List of admin actions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminLogResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/stats:
+    get:
+      summary: Get admin statistics
+      description: |
+        Returns summary statistics for admins.
+        Admin only endpoint.
+      operationId: getAdminStats
+      tags:
+        - Admin - Audit
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Admin statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStatsResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users-page:
+    get:
+      summary: Get user management page
+      description: |
+        Returns the HTML page for managing users.
+        Admin only endpoint.
+      operationId: getUserManagementPage
+      tags:
+        - Admin - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML user management page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+        '403':
+          description: Access denied page
+
+  /admin/audit-page:
+    get:
+      summary: Get audit log page
+      description: |
+        Returns the HTML page for viewing audit logs.
+        Admin only endpoint.
+      operationId: getAuditLogPage
+      tags:
+        - Admin - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML audit log page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+        '403':
+          description: Access denied page
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Session cookie from login
+
+  schemas:
+    UserAdminResponse:
+      type: object
+      required:
+        - id
+        - email
+        - display_name
+        - is_admin
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        display_name:
+          type: string
+        is_admin:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    UserListResponse:
+      type: object
+      required:
+        - users
+        - pagination
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserAdminResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    EditQuestionRequest:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 1000
+
+    SetPointsRequest:
+      type: object
+      required:
+        - points
+      properties:
+        points:
+          type: integer
+          minimum: 1
+          maximum: 100
+
+    EditAnswerRequest:
+      type: object
+      required:
+        - text
+        - is_correct
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+        is_correct:
+          type: boolean
+
+    QuestionResponse:
+      type: object
+      required:
+        - id
+        - quiz_id
+        - text
+        - points
+        - order_index
+      properties:
+        id:
+          type: string
+          format: uuid
+        quiz_id:
+          type: string
+          format: uuid
+        text:
+          type: string
+        points:
+          type: integer
+          minimum: 1
+          maximum: 100
+        order_index:
+          type: integer
+
+    AnswerResponse:
+      type: object
+      required:
+        - id
+        - question_id
+        - text
+        - is_correct
+      properties:
+        id:
+          type: string
+          format: uuid
+        question_id:
+          type: string
+          format: uuid
+        text:
+          type: string
+        is_correct:
+          type: boolean
+
+    AdminActionLogEntry:
+      type: object
+      required:
+        - id
+        - admin_id
+        - admin_display_name
+        - action
+        - target_type
+        - target_id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        admin_id:
+          type: string
+          format: uuid
+        admin_display_name:
+          type: string
+        action:
+          type: string
+          enum: [grant_admin, revoke_admin, edit_question, edit_answer, set_points]
+        target_type:
+          type: string
+          enum: [user, question, answer]
+        target_id:
+          type: string
+          format: uuid
+        before_value:
+          type: object
+          nullable: true
+        after_value:
+          type: object
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    AdminLogResponse:
+      type: object
+      required:
+        - logs
+        - pagination
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminActionLogEntry'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    AdminStatsResponse:
+      type: object
+      required:
+        - total_admins
+        - total_users
+        - total_quizzes
+        - total_questions
+      properties:
+        total_admins:
+          type: integer
+        total_users:
+          type: integer
+        total_quizzes:
+          type: integer
+        total_questions:
+          type: integer
+        recent_actions_count:
+          type: integer
+          description: Actions in last 24 hours
+
+    Pagination:
+      type: object
+      required:
+        - page
+        - page_size
+        - total_entries
+        - total_pages
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+        total_entries:
+          type: integer
+        total_pages:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string
+              type:
+                type: string
+
+tags:
+  - name: Admin - User Management
+    description: Endpoints for managing user admin status
+  - name: Admin - Content Editing
+    description: Endpoints for editing quiz content as admin
+  - name: Admin - Audit
+    description: Endpoints for viewing admin activity logs
+  - name: Admin - Pages
+    description: HTML page endpoints for admin UI

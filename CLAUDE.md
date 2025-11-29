@@ -25,9 +25,9 @@ cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLO
 Python 3.11+: Follow standard conventions
 
 ## Recent Changes
+- 003-admin-roles: Added Python 3.11+ + FastAPI (web framework), Uvicorn (ASGI server), Jinja2 (HTML templating)
 - 005-quiz-taking: Added Python 3.11+ + FastAPI (web framework), Uvicorn (ASGI server), Jinja2 (HTML templating), SQLAlchemy (ORM)
 - 002-user-management: Added Python 3.11+ + FastAPI (web framework), Uvicorn (ASGI server), Jinja2 (HTML templating), passlib (password hashing), python-jose (JWT/tokens)
-- 001-quiz-creation: Added Python 3.11+ + FastAPI (web framework), Uvicorn (ASGI server), Jinja2 (HTML templating)
 
 
 <!-- MANUAL ADDITIONS START -->

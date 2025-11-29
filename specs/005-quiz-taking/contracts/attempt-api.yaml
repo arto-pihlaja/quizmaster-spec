@@ -1,0 +1,712 @@
+openapi: 3.0.3
+info:
+  title: QuizMaster Quiz Taking API
+  description: API endpoints for browsing quizzes, taking quizzes, submitting answers, and viewing results
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /quizzes/browse:
+    get:
+      summary: Browse all available quizzes
+      description: |
+        Returns all quizzes in the system for the user to choose from.
+        Includes question count and user's attempt history for each quiz.
+      operationId: browseQuizzes
+      tags:
+        - Quiz Browser
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: List of available quizzes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizBrowserResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quizzes/{quiz_id}/start:
+    post:
+      summary: Start a quiz attempt
+      description: |
+        Begins a new quiz attempt for the authenticated user.
+        Creates snapshots of all questions and answers.
+        Returns the quiz with questions but WITHOUT correct answer indicators.
+      operationId: startQuiz
+      tags:
+        - Quiz Taking
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Quiz to start
+      responses:
+        '201':
+          description: Quiz attempt started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizTakingView'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /attempts/{attempt_id}:
+    get:
+      summary: Get in-progress attempt
+      description: |
+        Returns the current state of an in-progress attempt.
+        Used to resume if user navigates away and returns.
+        Does NOT include correct answers.
+      operationId: getAttempt
+      tags:
+        - Quiz Taking
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: attempt_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Attempt details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizTakingView'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not the attempt owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /attempts/{attempt_id}/submit:
+    post:
+      summary: Submit quiz answers
+      description: |
+        Submits all answers for the attempt.
+        All questions must have an answer.
+        Calculates score and updates scoreboard if new best.
+        Returns detailed results with correct answers.
+      operationId: submitAttempt
+      tags:
+        - Quiz Taking
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: attempt_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitRequest'
+      responses:
+        '200':
+          description: Quiz submitted, results returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '400':
+          description: Validation error (missing answers, already submitted)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not the attempt owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /attempts/{attempt_id}/results:
+    get:
+      summary: Get attempt results
+      description: |
+        Returns the results of a submitted attempt.
+        Only available after submission.
+        Shows correct answers and per-question feedback.
+      operationId: getAttemptResults
+      tags:
+        - Results
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: attempt_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Attempt results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '400':
+          description: Attempt not yet submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not the attempt owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quizzes/{quiz_id}/history:
+    get:
+      summary: Get user's attempt history for a quiz
+      description: |
+        Returns all of the current user's attempts for a specific quiz.
+        Shows scores and indicates which is the best attempt.
+      operationId: getQuizHistory
+      tags:
+        - History
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Attempt history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptHistoryResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /my-attempts:
+    get:
+      summary: Get all user's quiz attempts
+      description: |
+        Returns all quiz attempts for the current user across all quizzes.
+        Paginated, most recent first.
+      operationId: getMyAttempts
+      tags:
+        - History
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: User's attempt history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyAttemptsResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # HTML Page Endpoints
+
+  /browse:
+    get:
+      summary: Quiz browser HTML page
+      description: Returns the HTML page for browsing available quizzes.
+      operationId: getBrowsePage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML quiz browser page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+
+  /take/{quiz_id}:
+    get:
+      summary: Quiz taking HTML page
+      description: Returns the HTML page for taking a quiz.
+      operationId: getTakePage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: HTML quiz taking page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+        '404':
+          description: Quiz not found (HTML error page)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /results/{attempt_id}:
+    get:
+      summary: Results HTML page
+      description: Returns the HTML page showing attempt results.
+      operationId: getResultsPage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: attempt_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: HTML results page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+        '404':
+          description: Attempt not found (HTML error page)
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Session cookie from login
+
+  schemas:
+    QuizBrowserItem:
+      type: object
+      required:
+        - id
+        - title
+        - question_count
+        - user_attempts
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        question_count:
+          type: integer
+          minimum: 1
+        user_attempts:
+          type: integer
+          minimum: 0
+          description: Number of times current user completed this quiz
+        user_best_score:
+          type: integer
+          nullable: true
+          description: User's best score (null if never attempted)
+        user_best_percentage:
+          type: number
+          format: float
+          nullable: true
+          description: Best score as percentage (null if never attempted)
+
+    QuizBrowserResponse:
+      type: object
+      required:
+        - quizzes
+      properties:
+        quizzes:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizBrowserItem'
+
+    QuizTakingAnswer:
+      type: object
+      required:
+        - id
+        - text
+      properties:
+        id:
+          type: string
+          format: uuid
+        text:
+          type: string
+        # NOTE: is_correct is intentionally NOT included
+
+    QuizTakingQuestion:
+      type: object
+      required:
+        - id
+        - order
+        - text
+        - answers
+      properties:
+        id:
+          type: string
+          format: uuid
+        order:
+          type: integer
+          minimum: 1
+        text:
+          type: string
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizTakingAnswer'
+          minItems: 2
+          maxItems: 6
+
+    QuizTakingView:
+      type: object
+      required:
+        - attempt_id
+        - quiz_title
+        - questions
+        - total_questions
+      properties:
+        attempt_id:
+          type: string
+          format: uuid
+        quiz_title:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizTakingQuestion'
+        total_questions:
+          type: integer
+          minimum: 1
+
+    AnswerSubmission:
+      type: object
+      required:
+        - question_id
+        - selected_answer_id
+      properties:
+        question_id:
+          type: string
+          format: uuid
+        selected_answer_id:
+          type: string
+          format: uuid
+
+    SubmitRequest:
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerSubmission'
+          minItems: 1
+          description: Must include an answer for every question
+
+    AttemptResultAnswer:
+      type: object
+      required:
+        - question_order
+        - question_text
+        - question_points
+        - correct_answer
+        - is_correct
+        - points_earned
+      properties:
+        question_order:
+          type: integer
+          minimum: 1
+        question_text:
+          type: string
+        question_points:
+          type: integer
+          minimum: 1
+        selected_answer:
+          type: string
+          nullable: true
+          description: User's selected answer text
+        correct_answer:
+          type: string
+          description: The correct answer text
+        is_correct:
+          type: boolean
+        points_earned:
+          type: integer
+          minimum: 0
+
+    AttemptResult:
+      type: object
+      required:
+        - attempt_id
+        - quiz_title
+        - total_score
+        - total_points_possible
+        - percentage
+        - submitted_at
+        - answers
+      properties:
+        attempt_id:
+          type: string
+          format: uuid
+        quiz_title:
+          type: string
+        total_score:
+          type: integer
+          minimum: 0
+        total_points_possible:
+          type: integer
+          minimum: 1
+        percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        submitted_at:
+          type: string
+          format: date-time
+        is_new_best:
+          type: boolean
+          description: Whether this attempt set a new best score
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptResultAnswer'
+
+    AttemptHistoryItem:
+      type: object
+      required:
+        - attempt_id
+        - quiz_title
+        - total_score
+        - total_points_possible
+        - percentage
+        - submitted_at
+        - is_best
+      properties:
+        attempt_id:
+          type: string
+          format: uuid
+        quiz_title:
+          type: string
+        total_score:
+          type: integer
+          minimum: 0
+        total_points_possible:
+          type: integer
+          minimum: 1
+        percentage:
+          type: number
+          format: float
+        submitted_at:
+          type: string
+          format: date-time
+        is_best:
+          type: boolean
+          description: Whether this is the user's best attempt for this quiz
+
+    AttemptHistoryResponse:
+      type: object
+      required:
+        - quiz_id
+        - quiz_title
+        - attempts
+      properties:
+        quiz_id:
+          type: string
+          format: uuid
+        quiz_title:
+          type: string
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptHistoryItem'
+
+    MyAttemptsResponse:
+      type: object
+      required:
+        - attempts
+        - total
+      properties:
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptHistoryItem'
+        total:
+          type: integer
+          minimum: 0
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          example: "Quiz not found"
+
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: object
+                properties:
+                  loc:
+                    type: array
+                    items:
+                      type: string
+                  msg:
+                    type: string
+                  type:
+                    type: string
+
+tags:
+  - name: Quiz Browser
+    description: Discover quizzes to take
+  - name: Quiz Taking
+    description: Start and submit quiz attempts
+  - name: Results
+    description: View quiz results after submission
+  - name: History
+    description: View attempt history
+  - name: Pages
+    description: HTML page endpoints

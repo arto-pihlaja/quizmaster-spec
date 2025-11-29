@@ -1,0 +1,547 @@
+openapi: 3.0.3
+info:
+  title: QuizMaster Authentication API
+  description: API endpoints for user registration, authentication, and profile management
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      description: |
+        Creates a new user account with email, password, and display name.
+        The first user to register becomes an admin.
+      operationId: registerUser
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      summary: Log in to an existing account
+      description: |
+        Authenticates user with email and password.
+        Returns session cookie on success.
+        Account lockout after repeated failures.
+      operationId: loginUser
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Account locked (too many attempts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockoutError'
+
+  /auth/logout:
+    post:
+      summary: Log out current session
+      description: |
+        Invalidates the current session.
+        Clears the session cookie.
+      operationId: logoutUser
+      tags:
+        - Authentication
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Cleared session cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/forgot-password:
+    post:
+      summary: Request password reset
+      description: |
+        Sends a password reset email to the provided address.
+        Always returns success (prevents email enumeration).
+      operationId: forgotPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Reset email sent (if account exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /auth/reset-password:
+    post:
+      summary: Reset password with token
+      description: |
+        Sets a new password using the reset token from email.
+        Token is single-use and expires after 24 hours.
+      operationId: resetPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/me:
+    get:
+      summary: Get current user info
+      description: |
+        Returns the authenticated user's profile information.
+      operationId: getCurrentUser
+      tags:
+        - Profile
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /profile:
+    get:
+      summary: Get profile page
+      description: |
+        Returns the HTML profile page for the current user.
+      operationId: getProfilePage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML profile page
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+
+    put:
+      summary: Update profile
+      description: |
+        Updates the current user's display name.
+      operationId: updateProfile
+      tags:
+        - Profile
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /login:
+    get:
+      summary: Get login page
+      description: |
+        Returns the HTML login form.
+      operationId: getLoginPage
+      tags:
+        - Pages
+      responses:
+        '200':
+          description: HTML login page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /register:
+    get:
+      summary: Get registration page
+      description: |
+        Returns the HTML registration form.
+      operationId: getRegisterPage
+      tags:
+        - Pages
+      responses:
+        '200':
+          description: HTML registration page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /forgot-password:
+    get:
+      summary: Get forgot password page
+      description: |
+        Returns the HTML forgot password form.
+      operationId: getForgotPasswordPage
+      tags:
+        - Pages
+      responses:
+        '200':
+          description: HTML forgot password page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /reset-password:
+    get:
+      summary: Get reset password page
+      description: |
+        Returns the HTML reset password form.
+        Requires valid token in query string.
+      operationId: getResetPasswordPage
+      tags:
+        - Pages
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Reset token from email
+      responses:
+        '200':
+          description: HTML reset password page
+          content:
+            text/html:
+              schema:
+                type: string
+        '400':
+          description: Invalid or expired token (HTML error page)
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Session cookie from login
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - display_name
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: User's email address
+          example: "user@example.com"
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+          description: User's password
+          example: "securepassword123"
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Display name for scoreboard
+          example: "QuizMaster"
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "user@example.com"
+        password:
+          type: string
+          description: User's password
+          example: "securepassword123"
+
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address to send reset link
+          example: "user@example.com"
+
+    ResetPasswordRequest:
+      type: object
+      required:
+        - token
+        - new_password
+      properties:
+        token:
+          type: string
+          description: Reset token from email link
+          example: "abc123def456..."
+        new_password:
+          type: string
+          minLength: 8
+          maxLength: 128
+          description: New password
+          example: "newsecurepassword456"
+
+    ProfileUpdateRequest:
+      type: object
+      required:
+        - display_name
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: New display name
+          example: "NewDisplayName"
+
+    UserResponse:
+      type: object
+      required:
+        - id
+        - email
+        - display_name
+        - is_admin
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User unique identifier
+        email:
+          type: string
+          format: email
+          description: User's email address
+        display_name:
+          type: string
+          description: Display name for scoreboard
+        is_admin:
+          type: boolean
+          description: Whether user has admin privileges
+        created_at:
+          type: string
+          format: date-time
+          description: Registration timestamp
+
+    AuthResponse:
+      type: object
+      required:
+        - message
+        - user
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: "Login successful"
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    MessageResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Response message
+          example: "If an account exists with that email, a reset link has been sent."
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Invalid credentials"
+
+    LockoutError:
+      type: object
+      required:
+        - detail
+        - locked_until
+      properties:
+        detail:
+          type: string
+          description: Lockout message
+          example: "Account locked due to too many failed attempts"
+        locked_until:
+          type: string
+          format: date-time
+          description: When lockout expires
+        retry_after:
+          type: integer
+          description: Seconds until retry allowed
+          example: 300
+
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+                description: Location of error
+              msg:
+                type: string
+                description: Error message
+              type:
+                type: string
+                description: Error type
+
+tags:
+  - name: Authentication
+    description: User registration and login endpoints
+  - name: Profile
+    description: User profile management
+  - name: Pages
+    description: HTML page endpoints

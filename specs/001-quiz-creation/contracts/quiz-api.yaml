@@ -1,0 +1,524 @@
+openapi: 3.0.3
+info:
+  title: QuizMaster Quiz API
+  description: API endpoints for quiz creation, editing, and deletion
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /quizzes:
+    get:
+      summary: List current user's quizzes
+      description: |
+        Returns all quizzes owned by the authenticated user.
+        Results are ordered by last updated date (newest first).
+      operationId: listMyQuizzes
+      tags:
+        - Quizzes
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: List of quizzes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizListResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Create a new quiz
+      description: |
+        Creates a new quiz with the provided title and questions.
+        The authenticated user becomes the quiz owner.
+      operationId: createQuiz
+      tags:
+        - Quizzes
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizCreate'
+      responses:
+        '201':
+          description: Quiz created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quizzes/{quiz_id}:
+    parameters:
+      - name: quiz_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Quiz unique identifier
+
+    get:
+      summary: Get quiz details
+      description: |
+        Returns the full quiz with all questions and answers.
+        Only the quiz owner can view their quiz.
+      operationId: getQuiz
+      tags:
+        - Quizzes
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Quiz details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not the owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update an existing quiz
+      description: |
+        Replaces the quiz with the provided data.
+        Only the quiz owner can update their quiz.
+        All questions and answers are replaced atomically.
+      operationId: updateQuiz
+      tags:
+        - Quizzes
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizCreate'
+      responses:
+        '200':
+          description: Quiz updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not the owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a quiz
+      description: |
+        Permanently deletes the quiz and all its questions/answers.
+        Only the quiz owner can delete their quiz.
+      operationId: deleteQuiz
+      tags:
+        - Quizzes
+      security:
+        - sessionAuth: []
+      responses:
+        '204':
+          description: Quiz deleted successfully
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not the owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /my-quizzes:
+    get:
+      summary: Get quiz list HTML page
+      description: |
+        Returns the server-rendered page showing the user's quizzes.
+      operationId: getMyQuizzesPage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML page with quiz list
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+
+  /quizzes/new:
+    get:
+      summary: Get quiz creation HTML page
+      description: |
+        Returns the server-rendered quiz creation form.
+      operationId: getQuizCreatePage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML page with quiz creation form
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+
+  /quizzes/{quiz_id}/edit:
+    parameters:
+      - name: quiz_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get quiz edit HTML page
+      description: |
+        Returns the server-rendered quiz edit form with existing data.
+      operationId: getQuizEditPage
+      tags:
+        - Pages
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: HTML page with quiz edit form
+          content:
+            text/html:
+              schema:
+                type: string
+        '401':
+          description: Redirect to login
+          headers:
+            Location:
+              schema:
+                type: string
+        '403':
+          description: Not authorized (not the owner)
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Quiz not found
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Session cookie from login
+
+  schemas:
+    AnswerCreate:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Answer option text
+          example: "Paris"
+        is_correct:
+          type: boolean
+          default: false
+          description: Whether this is the correct answer
+          example: true
+
+    QuestionCreate:
+      type: object
+      required:
+        - text
+        - answers
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: Question text
+          example: "What is the capital of France?"
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerCreate'
+          minItems: 2
+          maxItems: 6
+          description: Answer options (2-6 required)
+        points:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 1
+          description: Points awarded for correct answer
+          example: 1
+
+    QuizCreate:
+      type: object
+      required:
+        - title
+        - questions
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Quiz title
+          example: "World Capitals Quiz"
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionCreate'
+          minItems: 1
+          maxItems: 100
+          description: Quiz questions (1-100 required)
+
+    AnswerResponse:
+      type: object
+      required:
+        - id
+        - text
+        - is_correct
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Answer unique identifier
+        text:
+          type: string
+          description: Answer option text
+        is_correct:
+          type: boolean
+          description: Whether this is the correct answer
+
+    QuestionResponse:
+      type: object
+      required:
+        - id
+        - text
+        - answers
+        - display_order
+        - points
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Question unique identifier
+        text:
+          type: string
+          description: Question text
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerResponse'
+          description: Answer options
+        display_order:
+          type: integer
+          minimum: 1
+          description: Position in quiz (1-indexed)
+        points:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Points for correct answer
+
+    QuizResponse:
+      type: object
+      required:
+        - id
+        - title
+        - owner_id
+        - questions
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Quiz unique identifier
+        title:
+          type: string
+          description: Quiz title
+        owner_id:
+          type: string
+          format: uuid
+          description: Owner's user ID
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionResponse'
+          description: All quiz questions
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    QuizListItem:
+      type: object
+      required:
+        - id
+        - title
+        - question_count
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Quiz unique identifier
+        title:
+          type: string
+          description: Quiz title
+        question_count:
+          type: integer
+          minimum: 0
+          description: Number of questions in quiz
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    QuizListResponse:
+      type: object
+      required:
+        - quizzes
+      properties:
+        quizzes:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizListItem'
+          description: User's quizzes
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Quiz not found"
+
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+                description: Location of error
+              msg:
+                type: string
+                description: Error message
+              type:
+                type: string
+                description: Error type
+
+tags:
+  - name: Quizzes
+    description: Quiz CRUD API endpoints
+  - name: Pages
+    description: HTML page endpoints

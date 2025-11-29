@@ -1,50 +1,125 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+==================
+Version change: N/A → 1.0.0 (initial ratification)
+
+Modified principles: None (initial creation)
+
+Added sections:
+- Core Principles (3 principles: Test-First Development, Build in Small Increments, Simplicity)
+- Technology Stack
+- Release Process
+- Governance
+
+Removed sections: None
+
+Templates requiring updates:
+- .specify/templates/plan-template.md: ✅ No updates required (Constitution Check section already generic)
+- .specify/templates/spec-template.md: ✅ No updates required (compatible with principles)
+- .specify/templates/tasks-template.md: ✅ No updates required (supports incremental delivery)
+
+Follow-up TODOs: None
+-->
+
+# QuizMaster Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Test-First Development
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All feature development MUST follow Test-Driven Development (TDD):
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- Tests MUST be written before implementation code
+- Tests MUST fail before implementation begins (Red phase)
+- Implementation MUST be minimal to pass tests (Green phase)
+- Refactoring MUST maintain passing tests (Refactor phase)
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Test-first ensures requirements are clear, code is testable by design, and
+regressions are caught immediately. Skipping tests leads to technical debt and fragile systems.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### II. Build in Small Increments
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Development MUST proceed in small, independently testable increments:
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Each increment MUST deliver demonstrable value
+- Each increment MUST be independently deployable
+- User stories MUST be scoped to complete within a single work session
+- Large features MUST be decomposed into vertical slices
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Small increments reduce risk, enable frequent feedback, and ensure continuous
+progress. Large batches hide problems and delay value delivery.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. Simplicity (YAGNI)
+
+All solutions MUST be the simplest that could possibly work:
+
+- Implementations MUST NOT include functionality "for the future"
+- Abstractions MUST NOT be created until duplication demands them
+- Dependencies MUST be minimized—prefer standard library over external packages
+- Configuration MUST have sensible defaults—avoid premature configurability
+
+**Rationale**: Complexity is the enemy of reliability. Every unused feature, premature
+abstraction, or unnecessary dependency increases maintenance burden and bug surface.
+
+## Technology Stack
+
+QuizMaster uses the following technology stack:
+
+| Layer | Technology | Version Constraint |
+|-------|------------|-------------------|
+| Language | Python | 3.11+ |
+| Web Framework | FastAPI | Latest stable |
+| Testing | pytest | Latest stable |
+| Database | To be determined | N/A |
+| API Format | REST + JSON | OpenAPI 3.0+ |
+
+**Stack Constraints**:
+
+- All new dependencies MUST be justified in PR descriptions
+- Security-sensitive dependencies MUST be pinned to specific versions
+- Development dependencies MUST be separated from production dependencies
+
+## Release Process
+
+### Versioning
+
+QuizMaster follows Semantic Versioning (SemVer):
+
+- **MAJOR**: Breaking changes to public APIs or data schemas
+- **MINOR**: New features, backward-compatible additions
+- **PATCH**: Bug fixes, documentation updates, internal refactors
+
+### Release Workflow
+
+1. All changes MUST pass automated tests before merge
+2. Release branches MUST be created from main
+3. Release notes MUST document all user-facing changes
+4. Deployments MUST be reversible (rollback capability required)
+
+### Hotfix Process
+
+1. Hotfixes MUST branch from the release tag
+2. Hotfixes MUST be cherry-picked to main after release
+3. Hotfix version MUST increment PATCH number only
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Constitution Authority
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+This constitution supersedes all other project practices. When conflicts arise between this
+document and other guidelines, this constitution takes precedence.
+
+### Amendment Process
+
+1. Proposed amendments MUST be documented in a PR
+2. Amendments MUST include rationale and migration plan
+3. Breaking governance changes require MAJOR version increment
+4. All team members MUST be notified of amendments
+
+### Compliance Verification
+
+- All PRs MUST verify compliance with Core Principles
+- Code reviewers MUST check for principle violations
+- Complexity additions MUST be justified against Simplicity principle
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-29 | **Last Amended**: 2025-11-29

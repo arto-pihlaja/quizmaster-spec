@@ -1,0 +1,308 @@
+openapi: 3.0.3
+info:
+  title: QuizMaster Scoreboard API
+  description: API endpoints for the scoreboard feature
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /scoreboard:
+    get:
+      summary: Get scoreboard HTML page
+      description: |
+        Returns the server-rendered scoreboard page.
+        Supports pagination via query parameter.
+        If user is logged in, their entry will be highlighted.
+      operationId: getScoreboardPage
+      tags:
+        - Scoreboard
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (1-indexed)
+      responses:
+        '200':
+          description: HTML page with scoreboard
+          content:
+            text/html:
+              schema:
+                type: string
+        '400':
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/scoreboard:
+    get:
+      summary: Get scoreboard data (JSON)
+      description: |
+        Returns scoreboard data as JSON for client-side refresh.
+        Used by JavaScript to update the page without full reload.
+      operationId: getScoreboardData
+      tags:
+        - Scoreboard API
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number (1-indexed)
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+            default: 50
+          description: Number of entries per page
+      responses:
+        '200':
+          description: Scoreboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreboardResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/scoreboard/my-rank:
+    get:
+      summary: Get current user's rank
+      description: |
+        Returns the logged-in user's rank and the page they appear on.
+        Requires authentication. Returns 401 if not logged in.
+      operationId: getMyRank
+      tags:
+        - Scoreboard API
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: User's rank information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyRankResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User has no score record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/scoreboard/stats:
+    get:
+      summary: Get scoreboard statistics
+      description: |
+        Returns aggregate statistics about the scoreboard.
+        Public endpoint, no authentication required.
+      operationId: getScoreboardStats
+      tags:
+        - Scoreboard API
+      responses:
+        '200':
+          description: Scoreboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreboardStats'
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Session cookie from login
+
+  schemas:
+    ScoreboardEntry:
+      type: object
+      required:
+        - rank
+        - user_id
+        - display_name
+        - total_score
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+          description: Competition ranking position
+          example: 1
+        user_id:
+          type: string
+          format: uuid
+          description: User's unique identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        display_name:
+          type: string
+          description: User's display name
+          example: "Alice"
+        total_score:
+          type: integer
+          minimum: 0
+          description: Total points earned across all quizzes
+          example: 2500
+        quizzes_completed:
+          type: integer
+          minimum: 0
+          description: Number of unique quizzes completed
+          example: 15
+
+    ScoreboardResponse:
+      type: object
+      required:
+        - entries
+        - pagination
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreboardEntry'
+          description: List of scoreboard entries for current page
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        current_user_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: |
+            ID of the logged-in user (for highlighting).
+            Null if not authenticated.
+
+    Pagination:
+      type: object
+      required:
+        - page
+        - page_size
+        - total_entries
+        - total_pages
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          description: Current page number
+          example: 1
+        page_size:
+          type: integer
+          minimum: 10
+          maximum: 100
+          description: Entries per page
+          example: 50
+        total_entries:
+          type: integer
+          minimum: 0
+          description: Total number of users on scoreboard
+          example: 1234
+        total_pages:
+          type: integer
+          minimum: 0
+          description: Total number of pages
+          example: 25
+        has_next:
+          type: boolean
+          description: Whether there is a next page
+        has_prev:
+          type: boolean
+          description: Whether there is a previous page
+
+    MyRankResponse:
+      type: object
+      required:
+        - user_id
+        - rank
+        - page
+        - total_score
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: User's unique identifier
+        rank:
+          type: integer
+          minimum: 1
+          description: User's current rank
+          example: 42
+        page:
+          type: integer
+          minimum: 1
+          description: Page number where user appears
+          example: 1
+        total_score:
+          type: integer
+          minimum: 0
+          description: User's total score
+          example: 1500
+        quizzes_completed:
+          type: integer
+          minimum: 0
+          description: User's quiz count
+          example: 10
+
+    ScoreboardStats:
+      type: object
+      required:
+        - total_users
+        - total_quizzes_taken
+        - highest_score
+      properties:
+        total_users:
+          type: integer
+          minimum: 0
+          description: Total users on scoreboard
+          example: 1234
+        total_quizzes_taken:
+          type: integer
+          minimum: 0
+          description: Sum of all quizzes completed
+          example: 5678
+        highest_score:
+          type: integer
+          minimum: 0
+          description: Top score on the leaderboard
+          example: 5000
+        average_score:
+          type: number
+          format: float
+          description: Average score across all users
+          example: 450.5
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Invalid page number"
+
+tags:
+  - name: Scoreboard
+    description: HTML page endpoints
+  - name: Scoreboard API
+    description: JSON API endpoints for dynamic updates

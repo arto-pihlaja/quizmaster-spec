@@ -257,14 +257,16 @@ class AttemptService:
         attempt.submitted_at = datetime.utcnow()
         attempt.status = "submitted"
 
+        # Flush attempt changes before updating scoreboard
+        # (scoreboard query uses raw SQL and needs to see the submitted status)
+        await self.db.flush()
+
         # Check if this is a new best score
         is_new_best = await self._update_scoreboard(user_id, attempt.quiz_id, total_score)
 
         # Update the scoreboard with aggregated user score
         scoreboard_service = ScoreboardService(self.db)
         await scoreboard_service.update_user_score(user_id)
-
-        await self.db.flush()
         logger.info(
             "Submitted attempt %s: score %d/%d (%.1f%%)",
             attempt_id,

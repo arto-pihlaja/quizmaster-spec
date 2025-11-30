@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}My Quizzes - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Quizzes</h1>
+    <a href="/quizzes/new" class="btn btn-primary">Create New Quiz</a>
+</div>
+
+{% if quizzes %}
+<div class="quiz-list">
+    {% for quiz in quizzes %}
+    <div class="quiz-card" data-quiz-id="{{ quiz.id }}">
+        <div class="quiz-card-header">
+            <h2 class="quiz-title">{{ quiz.title }}</h2>
+            <span class="quiz-question-count">{{ quiz.question_count }} question{% if quiz.question_count != 1 %}s{% endif %}</span>
+        </div>
+        <div class="quiz-card-meta">
+            <span class="quiz-date">Created: {{ quiz.created_at.strftime('%Y-%m-%d') }}</span>
+            <span class="quiz-date">Updated: {{ quiz.updated_at.strftime('%Y-%m-%d') }}</span>
+        </div>
+        <div class="quiz-card-actions">
+            <a href="/quizzes/{{ quiz.id }}/edit" class="btn btn-secondary">Edit</a>
+            <button type="button" class="btn btn-danger" onclick="deleteQuiz('{{ quiz.id }}')">Delete</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>You haven't created any quizzes yet.</p>
+    <a href="/quizzes/new" class="btn btn-primary">Create Your First Quiz</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/quiz.js"></script>
+{% endblock %}

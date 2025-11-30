@@ -1066,3 +1066,43 @@ textarea.form-control {
     font-size: 1.1rem;
     margin-bottom: 20px;
 }
+
+/* ===========================================
+   QUIZ CREATION FORM IMPROVEMENTS
+   =========================================== */
+
+/* Wider input fields for quiz creation */
+.answer-row input[type="text"] {
+    min-width: 400px;
+    flex: 1;
+}
+
+.question-block input[type="text"] {
+    min-width: 400px;
+}
+
+/* Correct answer indicator styling */
+.correct-answer-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.correct-indicator {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.correct-answer-label input[type="radio"]:checked + .correct-indicator {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.answer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}

@@ -129,11 +129,14 @@ function addAnswer(questionId, answerData = null) {
 
     const answerHtml = `
         <div class="answer-row" data-answer-id="${answerId}">
-            <input type="radio"
-                   name="questions[${questionId}][correct]"
-                   value="${answerId}"
-                   ${isCorrect ? 'checked' : ''}
-                   title="Mark as correct answer">
+            <label class="correct-answer-label">
+                <input type="radio"
+                       name="questions[${questionId}][correct]"
+                       value="${answerId}"
+                       ${isCorrect ? 'checked' : ''}
+                       title="Mark as correct answer">
+                <span class="correct-indicator">Correct</span>
+            </label>
             <input type="text"
                    name="questions[${questionId}][answers][${answerId}][text]"
                    required

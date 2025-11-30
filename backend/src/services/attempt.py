@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ..models import Quiz, Question, Answer, QuizAttempt, AttemptAnswer
+from .scoreboard import ScoreboardService
 from ..schemas.attempt import (
     QuizTakingView,
     QuizTakingQuestion,
@@ -258,6 +259,10 @@ class AttemptService:
 
         # Check if this is a new best score
         is_new_best = await self._update_scoreboard(user_id, attempt.quiz_id, total_score)
+
+        # Update the scoreboard with aggregated user score
+        scoreboard_service = ScoreboardService(self.db)
+        await scoreboard_service.update_user_score(user_id)
 
         await self.db.flush()
         logger.info(

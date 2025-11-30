@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from .db import init_db
@@ -47,8 +48,8 @@ app.include_router(scoreboard_router, tags=["Scoreboard"])
 
 @app.get("/")
 async def root():
-    """Root endpoint - redirect to quiz list."""
-    return {"message": "Welcome to QuizMaster", "docs": "/docs"}
+    """Root endpoint - redirect to browse page."""
+    return RedirectResponse(url="/browse", status_code=302)
 
 
 @app.get("/health")

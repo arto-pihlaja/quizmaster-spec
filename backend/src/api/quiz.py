@@ -140,26 +140,30 @@ async def get_quiz(
     return quiz_to_response(quiz)
 
 
-@router.get("/quizzes/{quiz_id}/history", response_model=AttemptHistoryResponse)
-async def get_quiz_history(
+@router.get("/quizzes/{quiz_id}/history", response_class=HTMLResponse)
+async def get_quiz_history_page(
+    request: Request,
     quiz_id: str,
     db: DbSession,
     user_id: CurrentUserId,
 ):
-    """Get user's attempt history for a specific quiz."""
+    """Get user's attempt history HTML page for a specific quiz."""
     service = AttemptService(db)
     history = await service.get_quiz_history(user_id, quiz_id)
 
     if history is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
-    # Get quiz title from first attempt or from quiz
-    quiz_title = history[0].quiz_title if history else ""
+    quiz_title = history[0].quiz_title if history else "Quiz"
 
-    return AttemptHistoryResponse(
-        quiz_id=quiz_id,
-        quiz_title=quiz_title,
-        attempts=history,
+    return templates.TemplateResponse(
+        "attempt_history.html",
+        {
+            "request": request,
+            "quiz_id": quiz_id,
+            "quiz_title": quiz_title,
+            "attempts": history,
+        },
     )
 
 

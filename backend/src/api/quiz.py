@@ -108,6 +108,19 @@ async def browse_quizzes(
     return QuizBrowserResponse(quizzes=quizzes)
 
 
+# HTML Page for creating new quiz - must be before parameterized routes
+@router.get("/quizzes/new", response_class=HTMLResponse)
+async def get_quiz_create_page(
+    request: Request,
+    user_id: CurrentUserId,
+):
+    """Get the quiz creation HTML page."""
+    return templates.TemplateResponse(
+        "quiz_create.html",
+        {"request": request},
+    )
+
+
 @router.get("/quizzes/{quiz_id}", response_model=QuizResponse)
 async def get_quiz(
     quiz_id: str,
@@ -206,18 +219,6 @@ async def get_my_quizzes_page(
     return templates.TemplateResponse(
         "quiz_list.html",
         {"request": request, "quizzes": quizzes},
-    )
-
-
-@router.get("/quizzes/new", response_class=HTMLResponse)
-async def get_quiz_create_page(
-    request: Request,
-    user_id: CurrentUserId,
-):
-    """Get the quiz creation HTML page."""
-    return templates.TemplateResponse(
-        "quiz_create.html",
-        {"request": request},
     )
 
 

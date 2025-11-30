@@ -23,10 +23,10 @@
 
 **Purpose**: Database schema and project structure
 
-- [ ] T001 Create database migration for quiz_attempts table in backend/src/db/migrations/
-- [ ] T002 Create database migration for attempt_answers table in backend/src/db/migrations/
-- [ ] T003 [P] Verify backend/src/models/ directory structure exists
-- [ ] T004 [P] Verify backend/tests/ directory structure (contract/, integration/, unit/)
+- [x] T001 Create database migration for quiz_attempts table in backend/src/db/migrations/
+- [x] T002 Create database migration for attempt_answers table in backend/src/db/migrations/
+- [x] T003 [P] Verify backend/src/models/ directory structure exists
+- [x] T004 [P] Verify backend/tests/ directory structure (contract/, integration/, unit/)
 
 ---
 
@@ -36,15 +36,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Create QuizAttempt SQLAlchemy model in backend/src/models/attempt.py
-- [ ] T006 Create AttemptAnswer SQLAlchemy model in backend/src/models/attempt_answer.py
-- [ ] T007 [P] Create Pydantic request schemas (StartQuizRequest, SubmitRequest, AnswerSubmission) in backend/src/schemas/attempt.py
-- [ ] T008 [P] Create Pydantic response schemas (QuizTakingView, QuizTakingQuestion, QuizTakingAnswer) in backend/src/schemas/attempt.py
-- [ ] T009 [P] Create Pydantic response schemas (AttemptResult, AttemptResultAnswer) in backend/src/schemas/attempt.py
-- [ ] T010 [P] Create Pydantic response schemas (QuizBrowserItem, QuizBrowserResponse) in backend/src/schemas/attempt.py
-- [ ] T011 [P] Create Pydantic response schemas (AttemptHistoryItem, AttemptHistoryResponse, MyAttemptsResponse) in backend/src/schemas/attempt.py
-- [ ] T012 Create AttemptService skeleton in backend/src/services/attempt.py
-- [ ] T013 Register attempt API router in backend/src/main.py
+- [x] T005 Create QuizAttempt SQLAlchemy model in backend/src/models/attempt.py
+- [x] T006 Create AttemptAnswer SQLAlchemy model in backend/src/models/attempt_answer.py
+- [x] T007 [P] Create Pydantic request schemas (StartQuizRequest, SubmitRequest, AnswerSubmission) in backend/src/schemas/attempt.py
+- [x] T008 [P] Create Pydantic response schemas (QuizTakingView, QuizTakingQuestion, QuizTakingAnswer) in backend/src/schemas/attempt.py
+- [x] T009 [P] Create Pydantic response schemas (AttemptResult, AttemptResultAnswer) in backend/src/schemas/attempt.py
+- [x] T010 [P] Create Pydantic response schemas (QuizBrowserItem, QuizBrowserResponse) in backend/src/schemas/attempt.py
+- [x] T011 [P] Create Pydantic response schemas (AttemptHistoryItem, AttemptHistoryResponse, MyAttemptsResponse) in backend/src/schemas/attempt.py
+- [x] T012 Create AttemptService skeleton in backend/src/services/attempt.py
+- [x] T013 Register attempt API router in backend/src/main.py
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -60,21 +60,21 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T014 [P] [US1] Contract test for POST /quizzes/{quiz_id}/start in backend/tests/contract/test_attempt_api.py
-- [ ] T015 [P] [US1] Contract test for POST /attempts/{attempt_id}/submit in backend/tests/contract/test_attempt_api.py
-- [ ] T016 [P] [US1] Unit test for AttemptService.start_quiz() in backend/tests/unit/test_attempt_service.py
-- [ ] T017 [P] [US1] Unit test for AttemptService.submit_quiz() in backend/tests/unit/test_attempt_service.py
-- [ ] T018 [US1] Integration test for complete quiz flow in backend/tests/integration/test_quiz_taking.py
+- [x] T014 [P] [US1] Contract test for POST /quizzes/{quiz_id}/start in backend/tests/contract/test_attempt_api.py
+- [x] T015 [P] [US1] Contract test for POST /attempts/{attempt_id}/submit in backend/tests/contract/test_attempt_api.py
+- [x] T016 [P] [US1] Unit test for AttemptService.start_quiz() in backend/tests/unit/test_attempt_service.py
+- [x] T017 [P] [US1] Unit test for AttemptService.submit_quiz() in backend/tests/unit/test_attempt_service.py
+- [x] T018 [US1] Integration test for complete quiz flow in backend/tests/integration/test_quiz_taking.py
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implement AttemptService.start_quiz() with snapshot creation in backend/src/services/attempt.py
-- [ ] T020 [US1] Implement AttemptService.submit_quiz() with score calculation in backend/src/services/attempt.py
-- [ ] T021 [US1] Implement AttemptService.update_scoreboard() for best-score logic in backend/src/services/attempt.py
-- [ ] T022 [US1] Implement POST /quizzes/{quiz_id}/start endpoint in backend/src/api/attempt.py
-- [ ] T023 [US1] Implement POST /attempts/{attempt_id}/submit endpoint in backend/src/api/attempt.py
-- [ ] T024 [US1] Create quiz_take.html template (questions without correct answers shown) in frontend/templates/quiz_take.html
-- [ ] T025 [US1] Implement GET /take/{quiz_id} HTML page endpoint in backend/src/api/attempt.py
+- [x] T019 [US1] Implement AttemptService.start_quiz() with snapshot creation in backend/src/services/attempt.py
+- [x] T020 [US1] Implement AttemptService.submit_quiz() with score calculation in backend/src/services/attempt.py
+- [x] T021 [US1] Implement AttemptService.update_scoreboard() for best-score logic in backend/src/services/attempt.py
+- [x] T022 [US1] Implement POST /quizzes/{quiz_id}/start endpoint in backend/src/api/attempt.py
+- [x] T023 [US1] Implement POST /attempts/{attempt_id}/submit endpoint in backend/src/api/attempt.py
+- [x] T024 [US1] Create quiz_take.html template (questions without correct answers shown) in frontend/templates/quiz_take.html
+- [x] T025 [US1] Implement GET /take/{quiz_id} HTML page endpoint in backend/src/api/attempt.py
 
 **Checkpoint**: User Story 1 should be fully functional - users can complete a quiz and get scored
 
@@ -88,14 +88,14 @@
 
 ### Tests for User Story 2
 
-- [ ] T026 [US2] Frontend test for answer selection and change in frontend/tests/test_attempt.js (manual or automated)
+- [x] T026 [US2] Frontend test for answer selection and change in frontend/tests/test_attempt.js (manual or automated)
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Create attempt.js with answer tracking object in frontend/static/js/attempt.js
-- [ ] T028 [US2] Implement answer selection click handlers in frontend/static/js/attempt.js
-- [ ] T029 [US2] Implement visual feedback for selected answers in frontend/static/js/attempt.js
-- [ ] T030 [US2] Add validation preventing submit with unanswered questions in frontend/static/js/attempt.js
+- [x] T027 [US2] Create attempt.js with answer tracking object in frontend/static/js/attempt.js
+- [x] T028 [US2] Implement answer selection click handlers in frontend/static/js/attempt.js
+- [x] T029 [US2] Implement visual feedback for selected answers in frontend/static/js/attempt.js
+- [x] T030 [US2] Add validation preventing submit with unanswered questions in frontend/static/js/attempt.js
 
 **Checkpoint**: User Stories 1 AND 2 complete - full quiz-taking flow with answer changes
 
@@ -109,16 +109,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Contract test for GET /attempts/{attempt_id}/results in backend/tests/contract/test_attempt_api.py
-- [ ] T032 [US3] Integration test for results page in backend/tests/integration/test_quiz_taking.py
+- [x] T031 [P] [US3] Contract test for GET /attempts/{attempt_id}/results in backend/tests/contract/test_attempt_api.py
+- [x] T032 [US3] Integration test for results page in backend/tests/integration/test_quiz_taking.py
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Implement AttemptService.get_results() in backend/src/services/attempt.py
-- [ ] T034 [US3] Implement GET /attempts/{attempt_id}/results endpoint in backend/src/api/attempt.py
-- [ ] T035 [US3] Create quiz_results.html template with score and per-question feedback in frontend/templates/quiz_results.html
-- [ ] T036 [US3] Implement GET /results/{attempt_id} HTML page endpoint in backend/src/api/attempt.py
-- [ ] T037 [US3] Add CSS styling for correct/incorrect answer display in frontend/static/css/styles.css
+- [x] T033 [US3] Implement AttemptService.get_results() in backend/src/services/attempt.py
+- [x] T034 [US3] Implement GET /attempts/{attempt_id}/results endpoint in backend/src/api/attempt.py
+- [x] T035 [US3] Create quiz_results.html template with score and per-question feedback in frontend/templates/quiz_results.html
+- [x] T036 [US3] Implement GET /results/{attempt_id} HTML page endpoint in backend/src/api/attempt.py
+- [x] T037 [US3] Add CSS styling for correct/incorrect answer display in frontend/static/css/styles.css
 
 **Checkpoint**: User Stories 1, 2, AND 3 complete - users see detailed feedback after submission
 
@@ -132,15 +132,15 @@
 
 ### Tests for User Story 4
 
-- [ ] T038 [P] [US4] Contract test for GET /quizzes/browse in backend/tests/contract/test_attempt_api.py
-- [ ] T039 [US4] Integration test for quiz browser in backend/tests/integration/test_quiz_taking.py
+- [x] T038 [P] [US4] Contract test for GET /quizzes/browse in backend/tests/contract/test_attempt_api.py
+- [x] T039 [US4] Integration test for quiz browser in backend/tests/integration/test_quiz_taking.py
 
 ### Implementation for User Story 4
 
-- [ ] T040 [US4] Implement AttemptService.browse_quizzes() in backend/src/services/attempt.py
-- [ ] T041 [US4] Implement GET /quizzes/browse endpoint in backend/src/api/attempt.py
-- [ ] T042 [US4] Create quiz_browser.html template with quiz list in frontend/templates/quiz_browser.html
-- [ ] T043 [US4] Implement GET /browse HTML page endpoint in backend/src/api/attempt.py
+- [x] T040 [US4] Implement AttemptService.browse_quizzes() in backend/src/services/attempt.py
+- [x] T041 [US4] Implement GET /quizzes/browse endpoint in backend/src/api/quiz.py
+- [x] T042 [US4] Create quiz_browser.html template with quiz list in frontend/templates/quiz_browser.html
+- [x] T043 [US4] Implement GET /browse HTML page endpoint in backend/src/api/attempt.py
 
 **Checkpoint**: User Stories 1-4 complete - full browse → take → submit → results flow
 
@@ -154,18 +154,18 @@
 
 ### Tests for User Story 5
 
-- [ ] T044 [P] [US5] Contract test for GET /quizzes/{quiz_id}/history in backend/tests/contract/test_attempt_api.py
-- [ ] T045 [P] [US5] Contract test for GET /my-attempts in backend/tests/contract/test_attempt_api.py
-- [ ] T046 [US5] Integration test for retake and best-score logic in backend/tests/integration/test_quiz_taking.py
+- [x] T044 [P] [US5] Contract test for GET /quizzes/{quiz_id}/history in backend/tests/contract/test_attempt_api.py
+- [x] T045 [P] [US5] Contract test for GET /my-attempts in backend/tests/contract/test_attempt_api.py
+- [x] T046 [US5] Integration test for retake and best-score logic in backend/tests/integration/test_quiz_taking.py
 
 ### Implementation for User Story 5
 
-- [ ] T047 [US5] Implement AttemptService.get_quiz_history() in backend/src/services/attempt.py
-- [ ] T048 [US5] Implement AttemptService.get_my_attempts() in backend/src/services/attempt.py
-- [ ] T049 [US5] Implement GET /quizzes/{quiz_id}/history endpoint in backend/src/api/attempt.py
-- [ ] T050 [US5] Implement GET /my-attempts endpoint in backend/src/api/attempt.py
-- [ ] T051 [US5] Create attempt_history.html template showing all attempts with best flagged in frontend/templates/attempt_history.html
-- [ ] T052 [US5] Add "Retake" button to quiz browser for previously completed quizzes in frontend/templates/quiz_browser.html
+- [x] T047 [US5] Implement AttemptService.get_quiz_history() in backend/src/services/attempt.py
+- [x] T048 [US5] Implement AttemptService.get_my_attempts() in backend/src/services/attempt.py
+- [x] T049 [US5] Implement GET /quizzes/{quiz_id}/history endpoint in backend/src/api/quiz.py
+- [x] T050 [US5] Implement GET /my-attempts endpoint in backend/src/api/attempt.py
+- [x] T051 [US5] Create attempt_history.html template showing all attempts with best flagged in frontend/templates/attempt_history.html
+- [x] T052 [US5] Add "Retake" button to quiz browser for previously completed quizzes in frontend/templates/quiz_browser.html
 
 **Checkpoint**: All 5 user stories complete - full quiz-taking feature implemented
 
@@ -175,12 +175,12 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T053 [P] Add error handling for quiz not found, attempt not found in backend/src/api/attempt.py
-- [ ] T054 [P] Add authorization checks (user can only access own attempts) in backend/src/api/attempt.py
-- [ ] T055 [P] Add input validation for all endpoints in backend/src/api/attempt.py
-- [ ] T056 [P] Add logging for quiz start, submit, and error events in backend/src/services/attempt.py
-- [ ] T057 Run quickstart.md verification steps
-- [ ] T058 Code cleanup and final review
+- [x] T053 [P] Add error handling for quiz not found, attempt not found in backend/src/api/attempt.py
+- [x] T054 [P] Add authorization checks (user can only access own attempts) in backend/src/api/attempt.py
+- [x] T055 [P] Add input validation for all endpoints in backend/src/api/attempt.py
+- [x] T056 [P] Add logging for quiz start, submit, and error events in backend/src/services/attempt.py
+- [x] T057 Run quickstart.md verification steps
+- [x] T058 Code cleanup and final review
 
 ---
 

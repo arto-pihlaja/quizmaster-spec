@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Attempt History - {{ quiz_title }} - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="attempt-history">
+    <div class="page-header">
+        <h1>Attempt History</h1>
+        <h2>{{ quiz_title }}</h2>
+    </div>
+
+    {% if attempts %}
+    <div class="history-list">
+        {% for attempt in attempts %}
+        <div class="history-item {{ 'best' if attempt.is_best else '' }}">
+            <div class="history-header">
+                <span class="attempt-date">{{ attempt.submitted_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                {% if attempt.is_best %}
+                <span class="best-badge">Best Score</span>
+                {% endif %}
+            </div>
+            <div class="history-score">
+                <span class="score-value">{{ attempt.total_score }}/{{ attempt.total_points_possible }}</span>
+                <span class="score-percentage">{{ attempt.percentage }}%</span>
+            </div>
+            <div class="history-actions">
+                <a href="/results/{{ attempt.attempt_id }}" class="btn btn-secondary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No attempts yet for this quiz.</p>
+    </div>
+    {% endif %}
+
+    <div class="page-actions">
+        <a href="/browse" class="btn btn-secondary">Back to Browse</a>
+        <a href="/take/{{ quiz_id }}" class="btn btn-primary">Take Quiz Again</a>
+    </div>
+</div>
+{% endblock %}

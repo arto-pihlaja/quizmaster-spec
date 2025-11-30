@@ -23,12 +23,12 @@
 
 **Purpose**: Database schema and project structure initialization
 
-- [ ] T001 Create backend project structure with src/, tests/ directories at backend/
-- [ ] T002 [P] Create requirements.txt with FastAPI, uvicorn, sqlalchemy, jinja2, pytest, pytest-asyncio, httpx in backend/
-- [ ] T003 [P] Create frontend directory structure with static/css/, static/js/, templates/ at frontend/
-- [ ] T004 Create database migration for quizzes table in backend/src/db/migrations/
-- [ ] T005 Create database migration for questions table in backend/src/db/migrations/
-- [ ] T006 Create database migration for answers table in backend/src/db/migrations/
+- [x] T001 Create backend project structure with src/, tests/ directories at backend/
+- [x] T002 [P] Create requirements.txt with FastAPI, uvicorn, sqlalchemy, jinja2, pytest, pytest-asyncio, httpx in backend/
+- [x] T003 [P] Create frontend directory structure with static/css/, static/js/, templates/ at frontend/
+- [x] T004 Create database migration for quizzes table in backend/src/db/migrations/
+- [x] T005 Create database migration for questions table in backend/src/db/migrations/
+- [x] T006 Create database migration for answers table in backend/src/db/migrations/
 
 ---
 
@@ -38,17 +38,17 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create database connection and session management in backend/src/db.py
-- [ ] T008 Create Quiz SQLAlchemy model in backend/src/models/quiz.py
-- [ ] T009 Create Question SQLAlchemy model in backend/src/models/question.py
-- [ ] T010 Create Answer SQLAlchemy model in backend/src/models/answer.py
-- [ ] T011 [P] Create models __init__.py exporting all models in backend/src/models/__init__.py
-- [ ] T012 [P] Create Pydantic request schemas (QuizCreate, QuestionCreate, AnswerCreate) in backend/src/schemas/quiz.py
-- [ ] T013 [P] Create Pydantic response schemas (QuizResponse, QuestionResponse, AnswerResponse, QuizListItem, QuizListResponse) in backend/src/schemas/quiz.py
-- [ ] T014 Create QuizService skeleton with dependency injection in backend/src/services/quiz.py
-- [ ] T015 Create FastAPI app entry point in backend/src/main.py
-- [ ] T016 Register quiz API router in backend/src/main.py
-- [ ] T017 [P] Create base CSS styles in frontend/static/css/styles.css
+- [x] T007 Create database connection and session management in backend/src/db.py
+- [x] T008 Create Quiz SQLAlchemy model in backend/src/models/quiz.py
+- [x] T009 Create Question SQLAlchemy model in backend/src/models/question.py
+- [x] T010 Create Answer SQLAlchemy model in backend/src/models/answer.py
+- [x] T011 [P] Create models __init__.py exporting all models in backend/src/models/__init__.py
+- [x] T012 [P] Create Pydantic request schemas (QuizCreate, QuestionCreate, AnswerCreate) in backend/src/schemas/quiz.py
+- [x] T013 [P] Create Pydantic response schemas (QuizResponse, QuestionResponse, AnswerResponse, QuizListItem, QuizListResponse) in backend/src/schemas/quiz.py
+- [x] T014 Create QuizService skeleton with dependency injection in backend/src/services/quiz.py
+- [x] T015 Create FastAPI app entry point in backend/src/main.py
+- [x] T016 Register quiz API router in backend/src/main.py
+- [x] T017 [P] Create base CSS styles in frontend/static/css/styles.css
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -64,24 +64,24 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T018 [P] [US1] Contract test for POST /quizzes (create quiz) in backend/tests/contract/test_quiz_api.py
-- [ ] T019 [P] [US1] Contract test for GET /quizzes (list my quizzes) in backend/tests/contract/test_quiz_api.py
-- [ ] T020 [P] [US1] Unit test for QuizService.create_quiz() in backend/tests/unit/test_quiz_service.py
-- [ ] T021 [P] [US1] Unit test for QuizService.list_quizzes() in backend/tests/unit/test_quiz_service.py
-- [ ] T022 [US1] Integration test for quiz creation flow in backend/tests/integration/test_quiz_crud.py
+- [x] T018 [P] [US1] Contract test for POST /quizzes (create quiz) in backend/tests/contract/test_quiz_api.py
+- [x] T019 [P] [US1] Contract test for GET /quizzes (list my quizzes) in backend/tests/contract/test_quiz_api.py
+- [x] T020 [P] [US1] Unit test for QuizService.create_quiz() in backend/tests/unit/test_quiz_service.py
+- [x] T021 [P] [US1] Unit test for QuizService.list_quizzes() in backend/tests/unit/test_quiz_service.py
+- [x] T022 [US1] Integration test for quiz creation flow in backend/tests/integration/test_quiz_crud.py
 
 ### Implementation for User Story 1
 
-- [ ] T023 [US1] Implement QuizService.create_quiz() with validation in backend/src/services/quiz.py
-- [ ] T024 [US1] Implement QuizService.list_quizzes() for owner in backend/src/services/quiz.py
-- [ ] T025 [US1] Implement POST /quizzes endpoint in backend/src/api/quiz.py
-- [ ] T026 [US1] Implement GET /quizzes endpoint in backend/src/api/quiz.py
-- [ ] T027 [US1] Create quiz_list.html template showing user's quizzes in frontend/templates/quiz_list.html
-- [ ] T028 [US1] Create quiz_create.html template with form in frontend/templates/quiz_create.html
-- [ ] T029 [US1] Create quiz.js for dynamic question/answer management in frontend/static/js/quiz.js
-- [ ] T030 [US1] Implement GET /my-quizzes HTML page endpoint in backend/src/api/quiz.py
-- [ ] T031 [US1] Implement GET /quizzes/new HTML page endpoint in backend/src/api/quiz.py
-- [ ] T032 [US1] Add validation error handling and display in frontend/static/js/quiz.js
+- [x] T023 [US1] Implement QuizService.create_quiz() with validation in backend/src/services/quiz.py
+- [x] T024 [US1] Implement QuizService.list_quizzes() for owner in backend/src/services/quiz.py
+- [x] T025 [US1] Implement POST /quizzes endpoint in backend/src/api/quiz.py
+- [x] T026 [US1] Implement GET /quizzes endpoint in backend/src/api/quiz.py
+- [x] T027 [US1] Create quiz_list.html template showing user's quizzes in frontend/templates/quiz_list.html
+- [x] T028 [US1] Create quiz_create.html template with form in frontend/templates/quiz_create.html
+- [x] T029 [US1] Create quiz.js for dynamic question/answer management in frontend/static/js/quiz.js
+- [x] T030 [US1] Implement GET /my-quizzes HTML page endpoint in backend/src/api/quiz.py
+- [x] T031 [US1] Implement GET /quizzes/new HTML page endpoint in backend/src/api/quiz.py
+- [x] T032 [US1] Add validation error handling and display in frontend/static/js/quiz.js
 
 **Checkpoint**: User Story 1 complete - users can create quizzes and see them in list
 
@@ -95,21 +95,21 @@
 
 ### Tests for User Story 2
 
-- [ ] T033 [P] [US2] Contract test for GET /quizzes/{id} (get quiz details) in backend/tests/contract/test_quiz_api.py
-- [ ] T034 [P] [US2] Contract test for PUT /quizzes/{id} (update quiz) in backend/tests/contract/test_quiz_api.py
-- [ ] T035 [P] [US2] Unit test for QuizService.get_quiz() in backend/tests/unit/test_quiz_service.py
-- [ ] T036 [P] [US2] Unit test for QuizService.update_quiz() in backend/tests/unit/test_quiz_service.py
-- [ ] T037 [US2] Integration test for quiz edit flow in backend/tests/integration/test_quiz_crud.py
+- [x] T033 [P] [US2] Contract test for GET /quizzes/{id} (get quiz details) in backend/tests/contract/test_quiz_api.py
+- [x] T034 [P] [US2] Contract test for PUT /quizzes/{id} (update quiz) in backend/tests/contract/test_quiz_api.py
+- [x] T035 [P] [US2] Unit test for QuizService.get_quiz() in backend/tests/unit/test_quiz_service.py
+- [x] T036 [P] [US2] Unit test for QuizService.update_quiz() in backend/tests/unit/test_quiz_service.py
+- [x] T037 [US2] Integration test for quiz edit flow in backend/tests/integration/test_quiz_crud.py
 
 ### Implementation for User Story 2
 
-- [ ] T038 [US2] Implement QuizService.get_quiz() with owner check in backend/src/services/quiz.py
-- [ ] T039 [US2] Implement QuizService.update_quiz() with atomic replacement in backend/src/services/quiz.py
-- [ ] T040 [US2] Implement GET /quizzes/{id} endpoint in backend/src/api/quiz.py
-- [ ] T041 [US2] Implement PUT /quizzes/{id} endpoint in backend/src/api/quiz.py
-- [ ] T042 [US2] Create quiz_edit.html template with pre-filled form in frontend/templates/quiz_edit.html
-- [ ] T043 [US2] Implement GET /quizzes/{id}/edit HTML page endpoint in backend/src/api/quiz.py
-- [ ] T044 [US2] Add edit button to quiz_list.html template in frontend/templates/quiz_list.html
+- [x] T038 [US2] Implement QuizService.get_quiz() with owner check in backend/src/services/quiz.py
+- [x] T039 [US2] Implement QuizService.update_quiz() with atomic replacement in backend/src/services/quiz.py
+- [x] T040 [US2] Implement GET /quizzes/{id} endpoint in backend/src/api/quiz.py
+- [x] T041 [US2] Implement PUT /quizzes/{id} endpoint in backend/src/api/quiz.py
+- [x] T042 [US2] Create quiz_edit.html template with pre-filled form in frontend/templates/quiz_edit.html
+- [x] T043 [US2] Implement GET /quizzes/{id}/edit HTML page endpoint in backend/src/api/quiz.py
+- [x] T044 [US2] Add edit button to quiz_list.html template in frontend/templates/quiz_list.html
 
 **Checkpoint**: User Stories 1 AND 2 complete - users can create and edit quizzes
 
@@ -123,16 +123,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T045 [P] [US3] Contract test for DELETE /quizzes/{id} in backend/tests/contract/test_quiz_api.py
-- [ ] T046 [P] [US3] Unit test for QuizService.delete_quiz() in backend/tests/unit/test_quiz_service.py
-- [ ] T047 [US3] Integration test for quiz deletion flow in backend/tests/integration/test_quiz_crud.py
+- [x] T045 [P] [US3] Contract test for DELETE /quizzes/{id} in backend/tests/contract/test_quiz_api.py
+- [x] T046 [P] [US3] Unit test for QuizService.delete_quiz() in backend/tests/unit/test_quiz_service.py
+- [x] T047 [US3] Integration test for quiz deletion flow in backend/tests/integration/test_quiz_crud.py
 
 ### Implementation for User Story 3
 
-- [ ] T048 [US3] Implement QuizService.delete_quiz() with owner check in backend/src/services/quiz.py
-- [ ] T049 [US3] Implement DELETE /quizzes/{id} endpoint in backend/src/api/quiz.py
-- [ ] T050 [US3] Add delete button with confirmation dialog to quiz_list.html in frontend/templates/quiz_list.html
-- [ ] T051 [US3] Implement delete confirmation JavaScript in frontend/static/js/quiz.js
+- [x] T048 [US3] Implement QuizService.delete_quiz() with owner check in backend/src/services/quiz.py
+- [x] T049 [US3] Implement DELETE /quizzes/{id} endpoint in backend/src/api/quiz.py
+- [x] T050 [US3] Add delete button with confirmation dialog to quiz_list.html in frontend/templates/quiz_list.html
+- [x] T051 [US3] Implement delete confirmation JavaScript in frontend/static/js/quiz.js
 
 **Checkpoint**: All 3 user stories complete - full quiz CRUD implemented
 
@@ -142,12 +142,12 @@
 
 **Purpose**: Error handling, authorization, and refinements across all stories
 
-- [ ] T052 [P] Add 403 Forbidden handling for non-owner access in backend/src/api/quiz.py
-- [ ] T053 [P] Add 404 Not Found handling for missing quizzes in backend/src/api/quiz.py
-- [ ] T054 [P] Add logging for quiz CRUD operations in backend/src/services/quiz.py
-- [ ] T055 [P] Add input sanitization for quiz title and question text in backend/src/services/quiz.py
-- [ ] T056 Run quickstart.md verification steps
-- [ ] T057 Code cleanup and final review
+- [x] T052 [P] Add 403 Forbidden handling for non-owner access in backend/src/api/quiz.py
+- [x] T053 [P] Add 404 Not Found handling for missing quizzes in backend/src/api/quiz.py
+- [x] T054 [P] Add logging for quiz CRUD operations in backend/src/services/quiz.py
+- [x] T055 [P] Add input sanitization for quiz title and question text in backend/src/services/quiz.py
+- [x] T056 Run quickstart.md verification steps
+- [x] T057 Code cleanup and final review
 
 ---
 

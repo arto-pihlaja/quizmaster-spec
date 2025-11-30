@@ -58,9 +58,9 @@ htmlcov/
 *.log
 logs/
 
-# Data directory (runtime data)
-backend/data/
-
-# SpecKit
+# Project-specific
 .claude/
 .specify/
+
+# Data directory (runtime data)
+backend/data/

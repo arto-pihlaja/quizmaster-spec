@@ -60,3 +60,7 @@ logs/
 
 # Data directory (runtime data)
 backend/data/
+
+# SpecKit
+.claude/
+.specify/

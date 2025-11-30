@@ -10,6 +10,7 @@ from .db import init_db
 from .api.quiz import router as quiz_router
 from .api.attempt import router as attempt_router
 from .api.auth import router as auth_router
+from .api.scoreboard import router as scoreboard_router
 
 
 # Paths relative to project root
@@ -41,6 +42,7 @@ if STATIC_DIR.exists():
 app.include_router(auth_router, tags=["Authentication"])
 app.include_router(quiz_router, tags=["Quizzes"])
 app.include_router(attempt_router, tags=["Quiz Taking"])
+app.include_router(scoreboard_router, tags=["Scoreboard"])
 
 
 @app.get("/")

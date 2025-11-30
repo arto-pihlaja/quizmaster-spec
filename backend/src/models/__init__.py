@@ -9,6 +9,7 @@ from .user import User
 from .session import Session
 from .login_attempt import LoginAttempt
 from .password_reset import PasswordReset
+from .user_score import UserScore
 
 __all__ = [
     "Quiz",
@@ -20,4 +21,5 @@ __all__ = [
     "Session",
     "LoginAttempt",
     "PasswordReset",
+    "UserScore",
 ]

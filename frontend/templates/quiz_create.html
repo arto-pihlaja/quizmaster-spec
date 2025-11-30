@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Create Quiz - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Create New Quiz</h1>
+</div>
+
+<form id="quiz-form" class="quiz-form">
+    <div class="form-group">
+        <label for="quiz-title">Quiz Title</label>
+        <input type="text" id="quiz-title" name="title" required maxlength="200" placeholder="Enter quiz title">
+        <span class="error-message" id="title-error"></span>
+    </div>
+
+    <div id="questions-container">
+        <h2>Questions</h2>
+        <div id="questions-list">
+            <!-- Questions will be added here dynamically -->
+        </div>
+        <button type="button" id="add-question-btn" class="btn btn-secondary">Add Question</button>
+    </div>
+
+    <div class="form-actions">
+        <a href="/my-quizzes" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Quiz</button>
+    </div>
+
+    <div id="form-error" class="form-error" style="display: none;"></div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/quiz.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initQuizForm();
+        // Add initial question
+        addQuestion();
+    });
+</script>
+{% endblock %}

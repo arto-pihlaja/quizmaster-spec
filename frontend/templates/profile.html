@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card profile-card">
+        <h1>Your Profile</h1>
+
+        <div class="profile-info">
+            <div class="profile-field">
+                <span class="label">Email:</span>
+                <span class="value">{{ user.email }}</span>
+            </div>
+            <div class="profile-field">
+                <span class="label">Member since:</span>
+                <span class="value">{{ user.created_at.strftime('%B %d, %Y') }}</span>
+            </div>
+            {% if user.is_admin %}
+            <div class="profile-badge">
+                <span class="admin-badge">Admin</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <hr class="divider">
+
+        <h2>Update Profile</h2>
+
+        <form id="profile-form" class="auth-form">
+            <div class="form-group">
+                <label for="display_name">Display Name</label>
+                <input type="text" id="display_name" name="display_name" class="form-control"
+                       value="{{ user.display_name }}" required maxlength="50">
+                <small class="form-hint">This is how you'll appear on scoreboards</small>
+            </div>
+
+            <div id="form-error" class="form-error" style="display: none;"></div>
+            <div id="form-success" class="form-success" style="display: none;"></div>
+
+            <button type="submit" class="btn btn-primary" id="submit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initProfileForm();
+    });
+</script>
+{% endblock %}

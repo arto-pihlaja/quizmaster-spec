@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QuizMaster{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="main-header">
+        <nav class="nav-container">
+            <a href="/" class="logo">QuizMaster</a>
+            <ul class="nav-links">
+                <li><a href="/browse">Browse Quizzes</a></li>
+                <li><a href="/my-quizzes">My Quizzes</a></li>
+                {% if user %}
+                <li><a href="/profile">{{ user.display_name }}</a></li>
+                <li>
+                    <form action="/auth/logout" method="POST" class="logout-form">
+                        <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register" class="btn btn-primary btn-sm">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2024 QuizMaster</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

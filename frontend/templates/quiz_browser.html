@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Quizzes - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Browse Quizzes</h1>
+</div>
+
+{% if quizzes %}
+<div class="quiz-list">
+    {% for quiz in quizzes %}
+    <div class="quiz-card">
+        <div class="quiz-card-header">
+            <h2 class="quiz-title">{{ quiz.title }}</h2>
+            <span class="quiz-question-count">{{ quiz.question_count }} question{% if quiz.question_count != 1 %}s{% endif %}</span>
+        </div>
+        <div class="quiz-card-meta">
+            {% if quiz.user_attempts > 0 %}
+            <span class="attempts-badge">Completed {{ quiz.user_attempts }} time{% if quiz.user_attempts != 1 %}s{% endif %}</span>
+            <span class="best-score">Best: {{ quiz.user_best_score }} pts ({{ quiz.user_best_percentage }}%)</span>
+            {% else %}
+            <span class="attempts-badge new">Not attempted yet</span>
+            {% endif %}
+        </div>
+        <div class="quiz-card-actions">
+            {% if quiz.user_attempts > 0 %}
+            <a href="/take/{{ quiz.id }}" class="btn btn-secondary">Retake Quiz</a>
+            <a href="/quizzes/{{ quiz.id }}/history" class="btn btn-secondary">View History</a>
+            {% else %}
+            <a href="/take/{{ quiz.id }}" class="btn btn-primary">Take Quiz</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No quizzes available yet.</p>
+    <a href="/quizzes/new" class="btn btn-primary">Create Your First Quiz</a>
+</div>
+{% endif %}
+{% endblock %}

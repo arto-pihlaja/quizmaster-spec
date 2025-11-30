@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Results - {{ results.quiz_title }} - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="quiz-results">
+    <div class="results-header">
+        <h1>Quiz Results</h1>
+        <h2>{{ results.quiz_title }}</h2>
+    </div>
+
+    <div class="score-summary">
+        <div class="score-big">
+            <span class="score-value">{{ results.total_score }}</span>
+            <span class="score-divider">/</span>
+            <span class="score-total">{{ results.total_points_possible }}</span>
+        </div>
+        <div class="score-percentage {{ 'excellent' if results.percentage >= 80 else 'good' if results.percentage >= 60 else 'needs-work' }}">
+            {{ results.percentage }}%
+        </div>
+        {% if results.is_new_best %}
+        <div class="new-best-badge">New Personal Best!</div>
+        {% endif %}
+    </div>
+
+    <div class="results-details">
+        <h3>Question Breakdown</h3>
+        {% for answer in results.answers %}
+        <div class="result-item {{ 'correct' if answer.is_correct else 'incorrect' }}">
+            <div class="result-header">
+                <span class="question-number">Q{{ answer.question_order }}</span>
+                <span class="points-earned">
+                    {{ answer.points_earned }}/{{ answer.question_points }} pts
+                </span>
+            </div>
+            <div class="result-question">
+                {{ answer.question_text }}
+            </div>
+            <div class="result-answers">
+                <div class="your-answer">
+                    <span class="label">Your answer:</span>
+                    <span class="answer-text {{ 'correct' if answer.is_correct else 'incorrect' }}">
+                        {% if answer.selected_answer %}
+                            {{ answer.selected_answer }}
+                            {% if answer.is_correct %}✓{% else %}✗{% endif %}
+                        {% else %}
+                            <em>No answer</em> ✗
+                        {% endif %}
+                    </span>
+                </div>
+                {% if not answer.is_correct %}
+                <div class="correct-answer">
+                    <span class="label">Correct answer:</span>
+                    <span class="answer-text correct">{{ answer.correct_answer }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="results-actions">
+        <a href="/browse" class="btn btn-secondary">Browse More Quizzes</a>
+        <a href="/quizzes/{{ results.quiz_id if results.quiz_id else '' }}/history" class="btn btn-secondary">View History</a>
+    </div>
+</div>
+{% endblock %}

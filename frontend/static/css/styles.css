@@ -696,3 +696,232 @@ textarea.form-control {
 .mb-3 { margin-bottom: 1.5rem; }
 .text-center { text-align: center; }
 .text-muted { color: var(--text-muted); }
+
+/* ===========================================
+   SCOREBOARD STYLES (004-scoreboard)
+   =========================================== */
+
+.scoreboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.scoreboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.scoreboard-header h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.user-rank-summary {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+}
+
+/* Scoreboard Stats (US2) */
+.scoreboard-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Scoreboard Actions */
+.scoreboard-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.refresh-icon {
+    display: inline-block;
+    margin-right: 4px;
+}
+
+/* Loading & Error States (US4) */
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.error-display {
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+}
+
+/* Scoreboard Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.scoreboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.scoreboard-table thead {
+    background-color: #f8f9fa;
+}
+
+.scoreboard-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.scoreboard-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scoreboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.scoreboard-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Column widths */
+.col-rank {
+    width: 80px;
+    text-align: center;
+}
+
+.col-name {
+    min-width: 200px;
+}
+
+.col-score {
+    width: 100px;
+    text-align: right;
+}
+
+.col-quizzes {
+    width: 100px;
+    text-align: center;
+}
+
+/* Rank Badges */
+.rank-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-weight: 700;
+    color: white;
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #ffd700, #ffb700);
+    box-shadow: 0 2px 4px rgba(255, 183, 0, 0.3);
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+    box-shadow: 0 2px 4px rgba(160, 160, 160, 0.3);
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #b06f28);
+    box-shadow: 0 2px 4px rgba(176, 111, 40, 0.3);
+}
+
+/* Highlighted Row (US3) */
+.scoreboard-row.highlight {
+    background-color: rgba(74, 144, 217, 0.1);
+}
+
+.scoreboard-row.highlight td {
+    font-weight: 600;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+    padding: 15px;
+}
+
+.page-link {
+    padding: 8px 16px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.page-link:hover:not(.disabled) {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.page-link.disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.page-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Empty State */
+.scoreboard-container .empty-state {
+    padding: 60px 20px;
+}
+
+.empty-message {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}

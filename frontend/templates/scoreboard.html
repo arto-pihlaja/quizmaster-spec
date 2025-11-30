@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Scoreboard - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="scoreboard-container">
+    <div class="scoreboard-header">
+        <h1>Scoreboard</h1>
+        {% if user_rank %}
+        <div class="user-rank-summary">
+            Your Rank: <strong>#{{ user_rank.rank }}</strong> | Score: <strong>{{ user_rank.total_score }}</strong>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Stats Summary (US2) -->
+    {% if stats %}
+    <div class="scoreboard-stats">
+        <div class="stat-item">
+            <span class="stat-value">{{ stats.total_users }}</span>
+            <span class="stat-label">Players</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ stats.total_quizzes_taken }}</span>
+            <span class="stat-label">Quizzes Taken</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ stats.highest_score }}</span>
+            <span class="stat-label">Top Score</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ "%.1f"|format(stats.average_score) }}</span>
+            <span class="stat-label">Avg Score</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons (US3, US4) -->
+    <div class="scoreboard-actions">
+        {% if current_user_id and user_rank %}
+        <button id="jump-to-rank-btn" class="btn btn-secondary" data-page="{{ user_rank.page }}">
+            Jump to My Rank
+        </button>
+        {% endif %}
+        <button id="refresh-btn" class="btn btn-secondary">
+            <span class="refresh-icon">&#8635;</span> Refresh
+        </button>
+    </div>
+
+    <!-- Loading Indicator (US4) -->
+    <div id="loading-indicator" class="loading-indicator" style="display: none;">
+        Loading...
+    </div>
+
+    <!-- Error Display (US4) -->
+    <div id="error-display" class="error-display" style="display: none;"></div>
+
+    <!-- Scoreboard Table -->
+    {% if scoreboard.entries %}
+    <div class="table-responsive">
+        <table class="scoreboard-table" id="scoreboard-table">
+            <thead>
+                <tr>
+                    <th class="col-rank">Rank</th>
+                    <th class="col-name">Player</th>
+                    <th class="col-score">Score</th>
+                    <th class="col-quizzes">Quizzes</th>
+                </tr>
+            </thead>
+            <tbody id="scoreboard-body">
+                {% for entry in scoreboard.entries %}
+                <tr class="scoreboard-row {% if current_user_id == entry.user_id %}highlight{% endif %}"
+                    data-user-id="{{ entry.user_id }}">
+                    <td class="col-rank">
+                        {% if entry.rank <= 3 %}
+                        <span class="rank-badge rank-{{ entry.rank }}">{{ entry.rank }}</span>
+                        {% else %}
+                        {{ entry.rank }}
+                        {% endif %}
+                    </td>
+                    <td class="col-name">{{ entry.display_name }}</td>
+                    <td class="col-score">{{ entry.total_score }}</td>
+                    <td class="col-quizzes">{{ entry.quizzes_completed }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls (US1, Polish) -->
+    {% if scoreboard.pagination.total_pages > 1 %}
+    <div class="pagination" id="pagination">
+        {% if scoreboard.pagination.has_prev %}
+        <a href="/scoreboard?page={{ scoreboard.pagination.page - 1 }}" class="page-link">&laquo; Previous</a>
+        {% else %}
+        <span class="page-link disabled">&laquo; Previous</span>
+        {% endif %}
+
+        <span class="page-info">
+            Page {{ scoreboard.pagination.page }} of {{ scoreboard.pagination.total_pages }}
+        </span>
+
+        {% if scoreboard.pagination.has_next %}
+        <a href="/scoreboard?page={{ scoreboard.pagination.page + 1 }}" class="page-link">Next &raquo;</a>
+        {% else %}
+        <span class="page-link disabled">Next &raquo;</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State (US2) -->
+    <div class="empty-state">
+        <p class="empty-message">No scores yet. Be the first to complete a quiz!</p>
+        <a href="/browse" class="btn btn-primary">Browse Quizzes</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Store current state for JS -->
+<script>
+    window.scoreboardState = {
+        currentUserId: {{ current_user_id|tojson if current_user_id else 'null' }},
+        currentPage: {{ scoreboard.pagination.page }},
+        totalPages: {{ scoreboard.pagination.total_pages }},
+        userRankPage: {{ user_rank.page if user_rank else 'null' }}
+    };
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/scoreboard.js"></script>
+{% endblock %}
